@@ -3,6 +3,8 @@
 input="$1"
 output="$2"
 
+echo "$output will decompress to $input"
+
 key=$(cat keys/key)
 iv=$(cat keys/iv)
 
@@ -20,4 +22,6 @@ echo -ne "uint8_t secret[] = {" >> secret.h
 openssl enc -aes-256-cbc -nosalt -e -in $input -K $key -iv $iv | xxd -i >> secret.h
 echo -ne "};\n" >> secret.h
 
-gcc -O3 -static -s -o $output main.c $(pkg-config openssl --libs --static) -L/media/sf_Projects/Personal/encrypted_gift/stages/1/openssl/pkg/usr/lib
+gcc -O3 -static -s -o stage.bin main.c $(pkg-config openssl --libs --static) -L/media/sf_Projects/Personal/encrypted_gift/stages/1/openssl/pkg/usr/lib
+
+tar -czvf $output stage.bin
